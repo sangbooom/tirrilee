@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "900180066755",
+    "project_id": "tirrilee-4ca14",
+    "storage_bucket": "tirrilee-4ca14.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:900180066755:android:ccf2917297f84e0944fd76",
+        "android_client_info": {
+          "package_name": "com.tirrilee"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "900180066755-dthe5j5eei79fh01lu8d1agmfh0q3ufq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC4PyOQDUPs-JqBT-AUxEktOoAO9V_EbNg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "900180066755-dthe5j5eei79fh01lu8d1agmfh0q3ufq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
