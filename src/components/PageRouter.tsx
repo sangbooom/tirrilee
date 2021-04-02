@@ -1,33 +1,29 @@
 import React, {useState, useEffect} from 'react';
-// import {View, Text} from 'react-native';
 import {
   CardStyleInterpolators,
   createStackNavigator,
 } from '@react-navigation/stack';
-// import auth from '@react-native-firebase/auth';
+import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import LoginPage from './LoginPage/LoginPage';
 import RegisterEmailPage from './RegisterPage/RegisterEmailPage';
 import RegisterPasswordPage from './RegisterPage/RegisterPasswordPage';
-// import MainPage from './MainPage/MainPage';
+import MainPage from './MainPage/MainPage';
 
 const PageRouter: React.FC = () => {
   const Stack = createStackNavigator();
-  //   const [initializing, setInitializing] = useState(true);
-  //   const [userLogin, setUser] = useState();
+  const [loading, setLoading] = useState<boolean>(true);
+  const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
 
-  //   const onAuthStateChanged = user => {
-  //     setUser(user);
-  //     if (initializing) {
-  //       setInitializing(false);
-  //     }
-  //     console.log(user);
-  //   };
+  useEffect(() => {
+    auth().onAuthStateChanged(userState => {
+      setUser(userState);
 
-  //   useEffect(() => {
-  //     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
-  //     return subscriber;
-  //     // eslint-disable-next-line
-  //   }, []);
+      if (loading) {
+        setLoading(false);
+      }
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
     <Stack.Navigator
       screenOptions={{
@@ -36,24 +32,23 @@ const PageRouter: React.FC = () => {
         gestureDirection: 'horizontal',
         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
       }}>
-      <Stack.Screen name="LoginPage">
-        {props => <LoginPage {...props} />}
-      </Stack.Screen>
-      <Stack.Screen name="RegisterEmailPage">
-        {props => <RegisterEmailPage {...props} />}
-      </Stack.Screen>
-      <Stack.Screen name="RegisterPasswordPage">
-        {props => <RegisterPasswordPage {...props} />}
-      </Stack.Screen>
-      {/* {!userLogin ? (
-        <Stack.Screen name="LoginPage">
-          {props => <LoginPage {...props} />}
-        </Stack.Screen>
+      {!user ? (
+        <React.Fragment>
+          <Stack.Screen name="LoginPage">
+            {props => <LoginPage {...props} />}
+          </Stack.Screen>
+          <Stack.Screen name="RegisterEmailPage">
+            {props => <RegisterEmailPage {...props} />}
+          </Stack.Screen>
+          <Stack.Screen name="RegisterPasswordPage">
+            {props => <RegisterPasswordPage {...props} />}
+          </Stack.Screen>
+        </React.Fragment>
       ) : (
         <Stack.Screen name="MainPage">
-          {props => <MainPage {...props} user={userLogin} />}
+          {props => <MainPage {...props} user={user} />}
         </Stack.Screen>
-      )} */}
+      )}
     </Stack.Navigator>
   );
 };

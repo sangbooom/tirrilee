@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -17,17 +17,28 @@ import {
   ButtonTypeB_next__Activation,
 } from '../../assets/css/Buttons/ButtonTypeB';
 import {css} from '@emotion/native';
+import {useDispatch} from 'react-redux';
+import {actions} from '../../features';
 
 interface RegisterEmailProps {
   navigation?: any;
 }
 
 const RegisterEmailPage: React.FC<RegisterEmailProps> = ({navigation}) => {
+  const dispatch = useDispatch();
+  // const userEmail = useSelector<RootState, Users>(state =>
+  //   selectUserAuth(state),
+  // );
+
   const [email, setEmail] = useState('');
   const [isConfirmSuccess, setConfirmSuccess] = useState(false);
 
   const deviceWidth = Dimensions.get('window').width;
   const deviceHeight = Dimensions.get('window').height;
+
+  useEffect(() => {
+    dispatch(actions.changeUserEmail(email));
+  }, [dispatch, email]);
 
   const onChangeEmailInput = (
     event: NativeSyntheticEvent<TextInputChangeEventData>,
@@ -43,7 +54,7 @@ const RegisterEmailPage: React.FC<RegisterEmailProps> = ({navigation}) => {
     } else if (text.match(regex) === null && isConfirmSuccess) {
       setConfirmSuccess(false);
     }
-  }
+  };
 
   const wrapper = css(`
     width: ${deviceWidth}px;
@@ -165,7 +176,11 @@ const RegisterEmailPage: React.FC<RegisterEmailProps> = ({navigation}) => {
         {isConfirmSuccess ? (
           <ButtonTypeB_next__Activation
             activeOpacity={1}
-            onPress={() => navigation.navigate('RegisterPasswordPage')}>
+            onPress={() =>
+              navigation.navigate('RegisterPasswordPage', {
+                email,
+              })
+            }>
             <Text style={buttonTypeB_next__Activation__Text}>다음</Text>
           </ButtonTypeB_next__Activation>
         ) : (
