@@ -2,7 +2,7 @@ import userReducer from '../components/LoginPage/LoginPage';
 import {
   combineReducers,
   createAction,
-  createSelector,
+  // createSelector,
   createSlice,
   PayloadAction,
 } from '@reduxjs/toolkit';
@@ -40,10 +40,11 @@ const userSlice = createSlice({
   },
 });
 
-export const selectUserAuth = createSelector(
-  (state: any) => state,
-  (user: Users) => user,
-);
+// 사용법 미숙
+// export const selectUserAuth = createSelector(
+//   (state: any) => state,
+//   (user: Users) => user,
+// );
 
 export const actions = {
   changeUserEmail,
