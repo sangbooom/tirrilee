@@ -1,28 +1,32 @@
+# Assignment Test
+> 3/31, 4/2, 4/3 진행
+
 ## 💭 처음 제플린을 보고 생각한 구조
 
-## ui를 어떻게 구성해야 할까
+### ui를 어떻게 구성해야 할까
 
 로그인,회원가입은 스택네비게이션, 홈,상품목록,등록페이지,검색,마이페이지는 바텀탭 네비게이션, 그안에 페이지들은 중첩된 스택네비게이션으로 처리하려고 했다.
 
-## 데이터 처리는 어떻게 할까
+### 데이터 처리는 어떻게 할까
 
 로그인, 회원가입, 자동로그인 등 인증에 관련된 것은 간단하게 파이어베이스를 사용해서 해결하고, 상품에 대한 데이터는 파이어베이스의 리얼타임 데이터베이스를 사용하거나, 컴포넌트 state에 목업데이터를 넣고 사용하면 되겠다.
 
-## api 사용여부
+### api 사용여부
 
 redux-toolkit과 Asyncstorage or keychain이 필요하다 생각했다. rtk는 상태관리 위해서 storage는 사용자 토큰 저장을 위해서 (로그인후 통신할때 사용자인지 확인하기 위해, 자동로그인, 로그아웃, 회원탈퇴 용도)
 
-api는 만들 필요없고, 사용자의 이름, 이메일, 사진, 등록상품, 찜목록 그리고 전체 등록상품를 저장 할 저장소만 있으면 될 것 같았다. 스토리지에 넣을지 데이터베이스에 저장할지 고민한 결과 파이어베이스 리얼타임 데이터베이스에 넣을 결정을 했다. 안전하고 인증부분은 편하기 때문이다.
+api는 만들 필요없고, 사용자의 이름, 이메일, 사진, 등록상품, 찜목록 그리고 전체 등록상품를 저장 할 저장소만 있으면 될 것 같았다. 스토리지에 넣을지 데이터베이스에 저장할지 고민한 결과 파이어베이스 리얼타임 데이터베이스에 넣을 결정을 했다. 안전하고 인증부분은 편하기 때문이다.   
 
-# 3/31
+### 3/31 개발일지
 
-서비스 이해하기, 간단한 구조 설계,  프로젝트에 타입스크립트 적용
+#### 진행상황
+- 서비스 이해하기, 간단한 구조 설계,  프로젝트에 타입스크립트 적용
 
-라이브러리 (react-navigation, redux-toolkit, emotion, react-native-firebase) 설치
+- 라이브러리 (react-navigation, redux-toolkit, emotion, react-native-firebase) 설치
 
-구글 파이어베이스와 프로젝트 연동하기 ,네비게이션 적용
+- 구글 파이어베이스와 프로젝트 연동하기 ,네비게이션 적용
 
-css는 빠른 개발을위해 inline-style로 적용시켰음. react에서는 emotion이 nested selector도 되고 굉장히 생산성에 도움됐는데 react native에서는 nested selector가 적용이 안된다고 한다..
+css는 빠른 개발을위해 inline-style로 적용시켰음. react에서는 emotion이 nested selector도 되고 굉장히 생산성에 도움됐는데 react native에서는 nested selector가 적용이 안된다고 한다..   
 [https://github.com/emotion-js/emotion/issues/1862](https://github.com/emotion-js/emotion/issues/1862) 
 
 마진과 패딩은 아래적용으로 통일시켰다.
@@ -46,3 +50,44 @@ error: Error: Unable to resolve module ...
 이미지 이름을 header-logo-2x로 바꾸면 정상작동한다. 이런건 디자이너와 커뮤니케이션을 통해 저장할때 @기호를 빼달라고 요청하는게 좋을것같다.
 
 제플린에 있는 css를 적용하면 react-native에 적용되지않는 css때문에 시간이 오래걸렸다. font-stretch: normal, box-shadow, letter-spacing: normal 등 RN에 맞게 고쳐야하는데 일단은 다 주석 처리했다.. 그리고 font는 구글폰트를 다운받아 적용했는데 적용이 잘안돼서 일단 넘어갔다.. css만 적용하는것도 시간이 오래걸렸기때문이다..
+
+### 4/2 개발일지
+
+스택네비게이터가 오른쪽으로 슬라이드 되는 구조를 접하고 싶었는데 [https://github.com/react-navigation/react-navigation/issues/705](https://github.com/react-navigation/react-navigation/issues/705)
+
+```jsx
+<Image source={require('../../assets/image/invalid-name.png')} />
+<Image source={require('../../assets/image/id-pw.png')} />
+<Image source={require('../../assets/image/oo.png')} />
+```
+
+제플린에 회원가입과 ID/PW 찾기가 이미지로 되어있길래 이미지로 하는 줄 알고 했지만 적용해보니 아닌 것 같았다.. touchableOpacity안에 Text를 둬서 들어가게했다.
+
+box-shadow를 적용시키기 위해
+
+```jsx
+style={{
+  shadowColor: '#red',
+  shadowOffset: {
+    width: 0,
+    height: 2,
+  },
+  shadowOpacity: 0.25,
+  shadowRadius: 3.84,
+  elevation: 5,
+}}
+```
+
+등 많은것을 적용시켰지만 잘 되지 않아 넘어갔다.
+
+### firebase auth 적용
+
+firebase를 사용하여 이메일 비밀번호를 가지고서 빠르게 로그인, 자동로그인, 회원가입을 할 수 있어서 도입했다. 회원 이름이나 프로필 url, 상품 목록은 firebase realtime database에 넣으려고 한다.
+
+### redux toolkit 도입
+
+사실 상태관리를 안해도 될정도의 규모일 것 같아서 처음에는 적용을 안시켰다가 조금씩 커지는 규모에 그냥 redux를 사용해서 상품정도는 redux로 관리하자고 생각했다.
+
+redux보다는 redux-toolkit을 사용하여 더 직관적이고 짧은 코드로 유지보수 용이하게 했다. redux-toolkit에 익숙하지않아 시간이 오래 걸렸다. 이전 프로젝트들은 ducks패턴에 컨테이너컴포넌트, 프레젠테이셔널 컴포넌트를 나눠 관심사를 분리시키고 props로 사용할 인자들을 일일히 다 넘겼었는데 redux-toolkit을 도입해보니까 훨씬 코드가 짧아지고 사용하기 편해졌다.
+
+하지만 redux-toolkit의 createSelector는 아직 사용에 미숙해서 useSelector를 사용했다..
