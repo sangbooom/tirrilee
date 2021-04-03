@@ -17,8 +17,8 @@ import {
   ButtonTypeB_next__Activation,
 } from '../../assets/css/Buttons/ButtonTypeB';
 import {css} from '@emotion/native';
-import {useSelector, useDispatch} from 'react-redux';
-import {actions, RootState} from '../../features';
+import {useDispatch} from 'react-redux';
+import {actions} from '../../features';
 
 interface RegisterEmailProps {
   navigation?: any;
@@ -26,9 +26,6 @@ interface RegisterEmailProps {
 
 const RegisterEmailPage: React.FC<RegisterEmailProps> = ({navigation}) => {
   const dispatch = useDispatch();
-  // const {email: emails, password: passwords} = useSelector(
-  //   (state: RootState) => state.user,
-  // );
 
   const [email, setEmail] = useState('');
   const [isConfirmSuccess, setConfirmSuccess] = useState(false);
