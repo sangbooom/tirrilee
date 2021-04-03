@@ -5,6 +5,8 @@ import {
   Dimensions,
   TouchableOpacity,
   Image,
+  NativeSyntheticEvent,
+  TextInputChangeEventData,
   TextInput,
   ScrollView,
 } from 'react-native';
@@ -13,6 +15,7 @@ import {css} from '@emotion/native';
 import {TopNavigation__done} from '../../../assets/css/TopNavigation/TopNavigation';
 import {InputFormA} from '../../../assets/css/InputForm_A/InputFormA';
 import {InputFormB} from '../../../assets/css/InputForm_B/InputFormB';
+import database from '@react-native-firebase/database';
 
 interface EnrollPageProps {
   navigation: any;
@@ -20,18 +23,53 @@ interface EnrollPageProps {
 
 const EnrollPage: React.FC<EnrollPageProps> = ({navigation}) => {
   const [isModalVisible, setModalVisible] = useState(true);
+  const [productName, setProductName] = useState('');
+  const [price, setPrice] = useState('');
+  const [description, setDescription] = useState('');
 
   const deviceWidth = Dimensions.get('window').width;
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('tabPress', e => {
       e.preventDefault();
-
       setModalVisible(true);
     });
-
     return unsubscribe;
   }, [navigation]);
+
+  const onChangeProductNameInput = (
+    event: NativeSyntheticEvent<TextInputChangeEventData>,
+  ) => {
+    setProductName(event.nativeEvent.text);
+  };
+
+  const onChangePriceInput = (
+    event: NativeSyntheticEvent<TextInputChangeEventData>,
+  ) => {
+    setPrice(event.nativeEvent.text);
+  };
+
+  const onChangeDescriptionInput = (
+    event: NativeSyntheticEvent<TextInputChangeEventData>,
+  ) => {
+    setDescription(event.nativeEvent.text);
+  };
+
+  const onSubmitDatabase = () => {
+    try {
+      database()
+        .ref('상품목록')
+        .child('상품')
+        .set({
+          productName: productName,
+          price: price,
+          description: description,
+        })
+        .then(() => console.log('데이터를 성공적으로 저장'));
+    } catch (error) {
+      console.log({error});
+    }
+  };
 
   const modal = css`
     flex: 1;
@@ -54,7 +92,7 @@ const EnrollPage: React.FC<EnrollPageProps> = ({navigation}) => {
     font-size: 16px;
     line-height: 12px;
     letter-spacing: -0.48px;
-    color: #bfbfbf;
+    color: #226bef;
   `;
 
   const topNavigation__false = css`
@@ -106,7 +144,15 @@ const EnrollPage: React.FC<EnrollPageProps> = ({navigation}) => {
             />
           </TouchableOpacity>
           <Text style={topNavigation_title}>등록하기</Text>
-          <Text style={topNavigation__false}>완료</Text>
+          {productName.length > 0 &&
+          price.length > 0 &&
+          description.length > 0 ? (
+            <Text style={topNavigation__true} onPress={onSubmitDatabase}>
+              완료
+            </Text>
+          ) : (
+            <Text style={topNavigation__false}>완료</Text>
+          )}
         </TopNavigation__done>
         <ScrollView showsVerticalScrollIndicator={false}>
           <TouchableOpacity
@@ -120,6 +166,8 @@ const EnrollPage: React.FC<EnrollPageProps> = ({navigation}) => {
               `}
               placeholder="제품명 입력"
               placeholderTextColor="#bfbfbf"
+              onChange={onChangeProductNameInput}
+              value={productName}
             />
 
             <Text style={enrollContent_title}>가격</Text>
@@ -129,6 +177,8 @@ const EnrollPage: React.FC<EnrollPageProps> = ({navigation}) => {
               `}
               placeholder="가격 입력"
               placeholderTextColor="#bfbfbf"
+              onChange={onChangePriceInput}
+              value={price}
             />
 
             <Text style={enrollContent_title}>상세 설명</Text>
@@ -140,8 +190,10 @@ const EnrollPage: React.FC<EnrollPageProps> = ({navigation}) => {
               textAlignVertical="top"
               placeholder="상세 설명 입력"
               placeholderTextColor="#bfbfbf"
+              onChange={onChangeDescriptionInput}
+              value={description}
             />
-            <Text style={enrollContent_title}>카테고리</Text>
+            {/* <Text style={enrollContent_title}>카테고리</Text> */}
           </View>
         </ScrollView>
       </View>
