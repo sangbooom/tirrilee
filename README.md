@@ -17,7 +17,7 @@ redux-toolkit과 Asyncstorage or keychain이 필요하다 생각했다. rtk는 �
 
 api는 만들 필요없고, 사용자의 이름, 이메일, 사진, 등록상품, 찜목록 그리고 전체 등록상품를 저장 할 저장소만 있으면 될 것 같았다. 스토리지에 넣을지 데이터베이스에 저장할지 고민한 결과 파이어베이스 리얼타임 데이터베이스에 넣을 결정을 했다. 안전하고 인증부분은 편하기 때문이다.   
 
-### 3/31
+# 3/31
 
 #### 진행상황
 - 서비스 이해하기, 간단한 구조 설계,  프로젝트에 타입스크립트 적용
@@ -26,34 +26,31 @@ api는 만들 필요없고, 사용자의 이름, 이메일, 사진, 등록상품
 
 - 구글 파이어베이스와 프로젝트 연동하기 ,네비게이션 적용
 
-css는 빠른 개발을위해 inline-style로 적용시켰음. react에서는 emotion이 nested selector도 되고 굉장히 생산성에 도움됐는데 react native에서는 nested selector가 적용이 안된다고 한다..   
-[https://github.com/emotion-js/emotion/issues/1862](https://github.com/emotion-js/emotion/issues/1862) 
+css는 빠르고 편하게 개발을 하기위해 짧은건 inline-style로 적용시켰음.    
+react에서는 emotion이 nested selector도 되고 굉장히 생산성에 도움됐는데 react native에서는 nested selector가 적용이 안된다고 한다..   
+[https://github.com/emotion-js/emotion/issues/1862](https://github.com/emotion-js/emotion/issues/1862)    
 
-마진과 패딩은 아래적용으로 통일시켰다.
+마진과 패딩은 아래적용으로 통일시켰다.  
 
-사실 css 재사용 컴포넌트를 위해 나누려고 시도를 많이 했다가 nested selector가 적용이 안되는 것을 알고나서는 공통 컴포넌트의 css만 재사용했다. 
+사실 css 재사용 컴포넌트를 위해 나누려고 시도를 많이 했다가 nested selector가 적용이 안되는 것을 알고나서는 공통 컴포넌트의 css만 재사용했다.  
 
 image를 불러오기 위해 
 
 ```jsx
 <Image source={require('../../assets/image/header-logo@2x.png')}/>
+
+// error: Error: Unable to resolve module ...
 ```
 
-위와 같이 작성했더니 에러가 났다.
+위와 같이 작성하면 에러가 난다.그 이유는 이미지이름에 @가 들어가 있어서였다.
 
-```jsx
-error: Error: Unable to resolve module ...
-```
+이미지 이름을 header-logo-2x로 바꾸면 정상작동한다. 
 
-그 이유는 이미지이름에 @가 들어가있어서였다.
+디자인이 web디자인이여서 RN에 css를 적용하면 react-native에 적용되지않는 css때문에 시간이 오래걸렸다. font-stretch: normal, box-shadow, letter-spacing: normal 등 RN에 맞게 고쳐야하는데 일단은 다 주석 처리했다.
 
-이미지 이름을 header-logo-2x로 바꾸면 정상작동한다. 이런건 디자이너와 커뮤니케이션을 통해 저장할때 @기호를 빼달라고 요청하는게 좋을것같다.
+# 4/2
 
-제플린에 있는 css를 적용하면 react-native에 적용되지않는 css때문에 시간이 오래걸렸다. font-stretch: normal, box-shadow, letter-spacing: normal 등 RN에 맞게 고쳐야하는데 일단은 다 주석 처리했다.. 그리고 font는 구글폰트를 다운받아 적용했는데 적용이 잘안돼서 일단 넘어갔다.. css만 적용하는것도 시간이 오래걸렸기때문이다..
-
-### 4/2
-
-스택네비게이터가 오른쪽으로 슬라이드 되는 구조를 접하고 싶었는데 [https://github.com/react-navigation/react-navigation/issues/705](https://github.com/react-navigation/react-navigation/issues/705)
+### 특이사항
 
 ```jsx
 <Image source={require('../../assets/image/invalid-name.png')} />
@@ -61,7 +58,7 @@ error: Error: Unable to resolve module ...
 <Image source={require('../../assets/image/oo.png')} />
 ```
 
-제플린에 회원가입과 ID/PW 찾기가 이미지로 되어있길래 이미지로 하는 줄 알고 했지만 적용해보니 아닌 것 같았다.. touchableOpacity안에 Text를 둬서 들어가게했다.
+제플린에 회원가입과 ID/PW 찾기가 이미지로 되어있길래 이미지로 하는 줄 알고 적용했다가 다시 고쳤다.
 
 box-shadow를 적용시키기 위해
 
@@ -78,7 +75,7 @@ style={{
 }}
 ```
 
-등 많은것을 적용시켰지만 잘 되지 않아 넘어갔다.
+등 많은 방법을 적용시켜봤지만 잘 되지 않아 넘어갔다.
 
 ### firebase auth 적용
 
@@ -93,6 +90,12 @@ redux보다는 redux-toolkit을 사용하여 더 직관적이고 짧은 코드�
 하지만 redux-toolkit의 createSelector는 아직 사용에 미숙해서 useSelector를 사용했다..
 
 # 4/3
+
+구현 시나리오 : 파이어베이스 리얼타임 데이터베이스에 등록한 상품을 저장시킨다. 저장시킨 순간 상품목록을 업데이트 시키고 사용자들은 실시간으로 등록된 상품을 볼 수 있게 한다.    
+상품 목록은 데이터베이스에서 상품데이터를 배열로 가져와 map으로 보여주고, flatList의 스크롤이 바닥에 닿을때 쯤 적당한 갯수의 상품 데이터를 불러오게한다.
+
+
+### 특이사항
 
 ```jsx
 <Tab.Navigator
@@ -121,32 +124,32 @@ screenOptions={({route}) => ({
 })}
 ```
 
-메인페이지에서 탭바 아이콘을 포커스했을때와 하지않았을때의 이미지를 다르게 하기 위해 중복되는 코드를 막으려 했으나 이미지에 동적 경로가 설정이 되지않아 그냥 컴포넌트마다 다 따로 붙여줬다..
+메인페이지에서 탭바 아이콘을 포커스했을때와 하지않았을때의 이미지를 다르게 하기 위해 중복되는 코드를 막으려 했으나 이미지에 동적 경로가 설정이 되지않아 그냥 컴포넌트마다 다 따로 붙여줬다
 
 [https://stackoverflow.com/questions/48713580/set-image-name-from-obj-to-source-react-native](https://stackoverflow.com/questions/48713580/set-image-name-from-obj-to-source-react-native)
 
 ```jsx
 <Tab.Navigator
 ...
-	<Tab.Screen
-		name="홈"
-		options={{
-		  tabBarIcon: ({focused}) =>
-		    focused ? (
-		      <Image
-		        source={require('../../assets/image/home-focused-3x.png')}
-		        style={{width: 32, height: 32}}
-		      />
-		    ) : (
-		      <Image
-		        source={require('../../assets/image/home-3x.png')}
-		        style={{width: 32, height: 32}}
-		      />
-		    ),
-		}}>
+<Tab.Screen
+ name="홈"
+ options={{
+  tabBarIcon: ({focused}) =>
+    focused ? (
+      <Image
+	source={require('../../assets/image/home-focused-3x.png')}
+	style={{width: 32, height: 32}}
+      />
+    ) : (
+      <Image
+	source={require('../../assets/image/home-3x.png')}
+	style={{width: 32, height: 32}}
+      />
+    ),
+}}>
 ```
 
-## 3/31, 4/2, 4/3 총 2.5일간 코딩테스트를 하고 느낀점
+## 과제테스트를 하고 느낀점
 
 일단 디자인을 보고 개발을 하니 혼자 해커톤 하는 것 같았다. 스스로 해결해보려고 많이 하다보니 사고의 폭이 넓어진 것 같다.
 
