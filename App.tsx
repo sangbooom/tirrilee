@@ -1,7 +1,7 @@
 import 'react-native-gesture-handler';
 import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
-import PageRouter from './src/components/PageRouter';
+import AuthRouter from './src/components/Router/AuthRouter';
 import {createStore} from 'redux';
 import {Provider} from 'react-redux';
 import {rootReducer} from './src/features/index';
@@ -13,7 +13,7 @@ const App: React.FC = () => {
   return (
     <NavigationContainer>
       <Provider store={store}>
-        <PageRouter />
+        <AuthRouter />
       </Provider>
     </NavigationContainer>
   );
