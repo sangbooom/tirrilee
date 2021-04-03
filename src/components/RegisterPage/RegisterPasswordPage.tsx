@@ -18,28 +18,24 @@ import {
   ButtonTypeB_next__Activation,
 } from '../../assets/css/Buttons/ButtonTypeB';
 import {css} from '@emotion/native';
-import {useDispatch} from 'react-redux';
-import {actions} from '../../features';
+import {useSelector, useDispatch} from 'react-redux';
+import {actions, RootState} from '../../features';
 // import database from '@react-native-firebase/database';
 import auth from '@react-native-firebase/auth';
 
 interface RegistePasswordProps {
   navigation?: any;
-  route: any;
 }
 
-const RegisterPasswordPage: React.FC<RegistePasswordProps> = ({
-  navigation,
-  route,
-}) => {
-  const [isloading, setLoading] = useState(false);
+const RegisterPasswordPage: React.FC<RegistePasswordProps> = ({navigation}) => {
+  const dispatch = useDispatch();
+  const {email} = useSelector((state: RootState) => state.user);
+
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
+  const [isloading, setLoading] = useState(false);
   const [isPasswordSecure, setPasswordSecure] = useState(false);
   const [isPasswordSame, setPasswordSame] = useState(false);
-
-  const dispatch = useDispatch();
-  const {email} = route.params;
 
   const deviceWidth = Dimensions.get('window').width;
   const deviceHeight = Dimensions.get('window').height;
@@ -97,6 +93,8 @@ const RegisterPasswordPage: React.FC<RegistePasswordProps> = ({
       // });
       setLoading(false);
       goToLoginPage();
+      dispatch(actions.changeUserEmail(''));
+      dispatch(actions.changeUserPassword(''));
     } catch (error) {
       console.log({error});
       setLoading(false);

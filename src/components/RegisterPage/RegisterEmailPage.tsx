@@ -17,8 +17,8 @@ import {
   ButtonTypeB_next__Activation,
 } from '../../assets/css/Buttons/ButtonTypeB';
 import {css} from '@emotion/native';
-import {useDispatch} from 'react-redux';
-import {actions} from '../../features';
+import {useSelector, useDispatch} from 'react-redux';
+import {actions, RootState} from '../../features';
 
 interface RegisterEmailProps {
   navigation?: any;
@@ -26,8 +26,8 @@ interface RegisterEmailProps {
 
 const RegisterEmailPage: React.FC<RegisterEmailProps> = ({navigation}) => {
   const dispatch = useDispatch();
-  // const userEmail = useSelector<RootState, Users>(state =>
-  //   selectUserAuth(state),
+  // const {email: emails, password: passwords} = useSelector(
+  //   (state: RootState) => state.user,
   // );
 
   const [email, setEmail] = useState('');
@@ -176,11 +176,7 @@ const RegisterEmailPage: React.FC<RegisterEmailProps> = ({navigation}) => {
         {isConfirmSuccess ? (
           <ButtonTypeB_next__Activation
             activeOpacity={1}
-            onPress={() =>
-              navigation.navigate('RegisterPasswordPage', {
-                email,
-              })
-            }>
+            onPress={() => navigation.navigate('RegisterPasswordPage')}>
             <Text style={buttonTypeB_next__Activation__Text}>다음</Text>
           </ButtonTypeB_next__Activation>
         ) : (

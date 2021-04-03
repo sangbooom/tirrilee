@@ -10,6 +10,7 @@ const MainPage: React.FC<MainPageProps> = () => {
   useEffect(() => {
     // auth().signOut();
   }, []);
+
   return (
     <View>
       <Text>메인페이지다!! 야호</Text>

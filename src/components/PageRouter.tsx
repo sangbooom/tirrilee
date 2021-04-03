@@ -25,31 +25,33 @@ const PageRouter: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
-    <Stack.Navigator
-      screenOptions={{
-        headerShown: false,
-        gestureEnabled: true,
-        gestureDirection: 'horizontal',
-        cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
-      }}>
-      {!user ? (
-        <React.Fragment>
-          <Stack.Screen name="LoginPage">
-            {props => <LoginPage {...props} />}
+    <React.Fragment>
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
+          gestureEnabled: true,
+          gestureDirection: 'horizontal',
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}>
+        {!user ? (
+          <React.Fragment>
+            <Stack.Screen name="LoginPage">
+              {props => <LoginPage {...props} />}
+            </Stack.Screen>
+            <Stack.Screen name="RegisterEmailPage">
+              {props => <RegisterEmailPage {...props} />}
+            </Stack.Screen>
+            <Stack.Screen name="RegisterPasswordPage">
+              {props => <RegisterPasswordPage {...props} />}
+            </Stack.Screen>
+          </React.Fragment>
+        ) : (
+          <Stack.Screen name="MainPage">
+            {props => <MainPage {...props} user={user} />}
           </Stack.Screen>
-          <Stack.Screen name="RegisterEmailPage">
-            {props => <RegisterEmailPage {...props} />}
-          </Stack.Screen>
-          <Stack.Screen name="RegisterPasswordPage">
-            {props => <RegisterPasswordPage {...props} />}
-          </Stack.Screen>
-        </React.Fragment>
-      ) : (
-        <Stack.Screen name="MainPage">
-          {props => <MainPage {...props} user={user} />}
-        </Stack.Screen>
-      )}
-    </Stack.Navigator>
+        )}
+      </Stack.Navigator>
+    </React.Fragment>
   );
 };
 
