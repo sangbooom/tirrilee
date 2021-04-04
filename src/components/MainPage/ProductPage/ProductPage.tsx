@@ -1,11 +1,21 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, {useState, useCallback} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import {View, Text, Image, Dimensions, FlatList} from 'react-native';
 import {css} from '@emotion/native';
+import database from '@react-native-firebase/database';
+import LoadingPage from '../../LoadingPage';
 
 interface ProductPageProps {}
 
+interface productListType {
+  productName: string;
+  price: string;
+  description: string;
+}
+
 const ProductPage: React.FC<ProductPageProps> = () => {
+  const [isLoading, setLoading] = useState(false);
+  const [productList, setProductList] = useState<Array<productListType>>([]);
   const [navInfo, setNavInfo] = useState([
     {
       text: '에코백',
@@ -39,6 +49,20 @@ const ProductPage: React.FC<ProductPageProps> = () => {
       },
     ]);
   }, []);
+
+  useEffect(() => {
+    setLoading(true);
+    database()
+      .ref('상품목록')
+      .on('value', snapshot => {
+        setProductList(snapshot.val());
+        setLoading(false);
+      });
+  }, []);
+
+  // useEffect(() => {
+  //   console.log('productList', productList);
+  // }, [productList]);
 
   const wrapper = css`
     flex: 1;
@@ -91,40 +115,61 @@ const ProductPage: React.FC<ProductPageProps> = () => {
   `;
 
   const card_list = css`
-    border: 1px solid black;
+    // flex-direction: row;
+    // flex-wrap: wrap;
   `;
 
   return (
-    <View style={wrapper}>
-      <View style={header}>
-        <Text style={header_title}>상품 목록</Text>
-        <Image
-          source={require('../../../assets/image/search-3x-black.png')}
-          style={{width: 24, height: 24}}
+    <React.Fragment>
+      <View style={wrapper}>
+        <View style={header}>
+          <Text style={header_title}>상품 목록</Text>
+          <Image
+            source={require('../../../assets/image/search-3x-black.png')}
+            style={{width: 24, height: 24}}
+          />
+        </View>
+        <View style={nav}>
+          {navInfo.map((info, index) => (
+            <React.Fragment key={index}>
+              {index === 0 ? null : <View style={nav__after} />}
+              <Text
+                onPress={() => onPressTextFocus(index)}
+                style={info.status ? nav_content__focused : nav_content}>
+                {info.text}
+              </Text>
+            </React.Fragment>
+          ))}
+        </View>
+        <FlatList
+          style={card_list}
+          showsVerticalScrollIndicator={false}
+          numColumns={2}
+          keyExtractor={(item, index) => {
+            return index.toString();
+          }}
+          data={productList}
+          renderItem={({item, index}) => (
+            <View
+              key={index}
+              style={[
+                index === productList.length - 1 &&
+                  css`
+                    margin-bottom: 30px;
+                  `,
+                {
+                  width: '50%',
+                  height: 212,
+                },
+              ]}>
+              <Text>{item.productName}</Text>
+              <Text>{item.price}</Text>
+            </View>
+          )}
         />
       </View>
-      <View style={nav}>
-        {navInfo.map((info, index) => (
-          <React.Fragment key={index}>
-            {index === 0 ? null : <View style={nav__after} />}
-            <Text
-              onPress={() => onPressTextFocus(index)}
-              style={info.status ? nav_content__focused : nav_content}>
-              {info.text}
-            </Text>
-          </React.Fragment>
-        ))}
-      </View>
-      <View style={card_list}>
-        <View
-          style={{
-            width: '50%',
-            height: 200,
-            borderWidth: 1,
-            borderColor: 'green',
-          }}></View>
-      </View>
-    </View>
+      {isLoading && <LoadingPage />}
+    </React.Fragment>
   );
 };
 

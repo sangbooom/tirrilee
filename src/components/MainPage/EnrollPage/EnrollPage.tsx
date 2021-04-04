@@ -8,6 +8,7 @@ import {
   NativeSyntheticEvent,
   TextInputChangeEventData,
   TextInput,
+  Alert,
   ScrollView,
 } from 'react-native';
 import Modal from 'react-native-modal';
@@ -79,7 +80,14 @@ const EnrollPage: React.FC<EnrollPageProps> = ({navigation}) => {
           price: price,
           description: description,
         })
-        .then(() => console.log('데이터를 성공적으로 저장'));
+        .then(() =>
+          Alert.alert('완료', '상품이 등록되었습니다.', [
+            {
+              text: '확인',
+              onPress: onToggleModalVisible,
+            },
+          ]),
+        );
     } catch (error) {
       console.log({error});
     }
