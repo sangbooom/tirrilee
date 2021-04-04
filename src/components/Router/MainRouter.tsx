@@ -13,9 +13,9 @@ interface MainRouterProps {}
 
 const MainRouter: React.FC<MainRouterProps> = () => {
   const Tab = createBottomTabNavigator();
-  useEffect(() => {
-    // auth().signOut();
-  }, []);
+  // useEffect(() => {
+  //   // auth().signOut();
+  // }, []);
 
   return (
     <Tab.Navigator

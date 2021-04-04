@@ -1,9 +1,10 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect, useCallback} from 'react';
-import {View, Text, Image, Dimensions, FlatList} from 'react-native';
+import {View, Text, Image, Dimensions, FlatList, Alert} from 'react-native';
 import {css} from '@emotion/native';
 import database from '@react-native-firebase/database';
 import LoadingPage from '../../LoadingPage';
+import RatingPage from '../../RatingPage';
 
 interface ProductPageProps {}
 
@@ -11,6 +12,7 @@ interface productListType {
   productName: string;
   price: string;
   description: string;
+  imageSource: string;
 }
 
 const ProductPage: React.FC<ProductPageProps> = () => {
@@ -33,6 +35,16 @@ const ProductPage: React.FC<ProductPageProps> = () => {
 
   const deviceWidth = Dimensions.get('window').width;
 
+  useEffect(() => {
+    setLoading(true);
+    database()
+      .ref('상품목록')
+      .on('value', snapshot => {
+        setProductList(snapshot.val());
+        setLoading(false);
+      });
+  }, []);
+
   const onPressTextFocus = useCallback((index: number) => {
     setNavInfo([
       {
@@ -49,20 +61,6 @@ const ProductPage: React.FC<ProductPageProps> = () => {
       },
     ]);
   }, []);
-
-  useEffect(() => {
-    setLoading(true);
-    database()
-      .ref('상품목록')
-      .on('value', snapshot => {
-        setProductList(snapshot.val());
-        setLoading(false);
-      });
-  }, []);
-
-  // useEffect(() => {
-  //   console.log('productList', productList);
-  // }, [productList]);
 
   const wrapper = css`
     flex: 1;
@@ -114,9 +112,29 @@ const ProductPage: React.FC<ProductPageProps> = () => {
     color: #000000;
   `;
 
-  const card_list = css`
-    // flex-direction: row;
-    // flex-wrap: wrap;
+  const cardList_productName = css`
+    font-family: 'NotoSansKR-Medium';
+    font-size: 14px;
+    line-height: 20px;
+    text-align: left;
+    color: #000000;
+  `;
+
+  const cardList_price = css`
+    font-family: 'NotoSansKR-Bold';
+    font-size: 16px;
+    line-height: 24px;
+    text-align: left;
+    color: #000000;
+  `;
+
+  const cardList_won = css`
+    font-family: 'NotoSansKR-Regular';
+    font-size: 12px;
+    line-height: 18px;
+    text-align: left;
+    color: #000000;
+    padding: 3px;
   `;
 
   return (
@@ -142,8 +160,7 @@ const ProductPage: React.FC<ProductPageProps> = () => {
           ))}
         </View>
         <FlatList
-          style={card_list}
-          showsVerticalScrollIndicator={false}
+          // showsVerticalScrollIndicator={false}
           numColumns={2}
           keyExtractor={(item, index) => {
             return index.toString();
@@ -157,13 +174,37 @@ const ProductPage: React.FC<ProductPageProps> = () => {
                   css`
                     margin-bottom: 30px;
                   `,
+                index % 2 === 0 &&
+                  css`
+                    padding-right: 6px;
+                  `,
+                index % 2 === 1 &&
+                  css`
+                    padding-left: 6px;
+                  `,
                 {
                   width: '50%',
-                  height: 212,
+                  height: 232,
                 },
               ]}>
-              <Text>{item.productName}</Text>
-              <Text>{item.price}</Text>
+              <Image
+                source={{uri: item.imageSource}}
+                style={{
+                  width: '100%',
+                  height: 150,
+                  borderRadius: 6,
+                  marginBottom: 8,
+                }}
+              />
+              <Text style={cardList_productName}>{item.productName}</Text>
+              <RatingPage />
+              <View
+                style={css`
+                  flex-direction: row;
+                `}>
+                <Text style={cardList_price}>{item.price}</Text>
+                <Text style={cardList_won}>원</Text>
+              </View>
             </View>
           )}
         />

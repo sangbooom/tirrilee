@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect, useCallback} from 'react';
 import {
   View,
@@ -7,7 +8,6 @@ import {
   Image,
   NativeSyntheticEvent,
   TextInputChangeEventData,
-  TextInput,
   Alert,
   ScrollView,
 } from 'react-native';
@@ -17,6 +17,7 @@ import {TopNavigation__done} from '../../../assets/css/TopNavigation/TopNavigati
 import {InputFormA} from '../../../assets/css/InputForm_A/InputFormA';
 import {InputFormB} from '../../../assets/css/InputForm_B/InputFormB';
 import database from '@react-native-firebase/database';
+import ImagePicker from 'react-native-image-picker';
 
 interface EnrollPageProps {
   navigation: any;
@@ -28,8 +29,19 @@ const EnrollPage: React.FC<EnrollPageProps> = ({navigation}) => {
   const [productName, setProductName] = useState('');
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
+  const [imageSource, setImageSource] = useState('');
 
   const deviceWidth = Dimensions.get('window').width;
+
+  useEffect(() => {
+    database()
+      .ref('상품목록')
+      .on('value', snapshot => {
+        setProductListLength(
+          snapshot.val() ? Object.keys(snapshot.val()).length : 0,
+        );
+      });
+  }, []);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener(
@@ -43,14 +55,36 @@ const EnrollPage: React.FC<EnrollPageProps> = ({navigation}) => {
   }, [navigation]);
 
   useEffect(() => {
-    database()
-      .ref('상품목록')
-      .on('value', snapshot => {
-        setProductListLength(
-          snapshot.val() ? Object.keys(snapshot.val()).length : 0,
-        );
-      });
-  }, []);
+    console.log('imageSource', imageSource);
+  }, [imageSource]);
+
+  const options = {
+    title: '프로필 변경',
+    cancelButtonTitle: '취소',
+    takePhotoButtonTitle: '사진 찍기',
+    chooseFromLibraryButtonTitle: '앨범에서 선택',
+    storageOptions: {
+      skipBackup: true,
+      path: 'images',
+    },
+  };
+
+  const showImagePicker = () => {
+    ImagePicker.showImagePicker(options, (response: any) => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else if (response.customButton) {
+        console.log('User tapped custom button: ', response.customButton);
+        Alert.alert(response.customButton);
+      } else {
+        // You can also display the image using data:
+        // const source = { uri: 'data:image/jpeg;base64,' + response.data };
+        setImageSource(response.uri);
+      }
+    });
+  };
 
   const onChangeProductNameInput = (
     event: NativeSyntheticEvent<TextInputChangeEventData>,
@@ -76,6 +110,7 @@ const EnrollPage: React.FC<EnrollPageProps> = ({navigation}) => {
         .ref('상품목록')
         .child(productListLength.toString())
         .set({
+          imageSource: imageSource,
           productName: productName,
           price: price,
           description: description,
@@ -149,6 +184,10 @@ const EnrollPage: React.FC<EnrollPageProps> = ({navigation}) => {
 
   const onToggleModalVisible = useCallback(() => {
     setModalVisible(prev => !prev);
+    setProductName('');
+    setPrice('');
+    setDescription('');
+    setImageSource('');
     navigation.navigate('홈');
   }, [navigation]);
 
@@ -179,7 +218,18 @@ const EnrollPage: React.FC<EnrollPageProps> = ({navigation}) => {
         <ScrollView showsVerticalScrollIndicator={false}>
           <TouchableOpacity
             style={enrollPhoto}
-            activeOpacity={1}></TouchableOpacity>
+            activeOpacity={1}
+            onPress={showImagePicker}>
+            {imageSource === '' ? null : (
+              <Image
+                source={{uri: imageSource}}
+                style={{
+                  width: deviceWidth,
+                  height: 324,
+                }}
+              />
+            )}
+          </TouchableOpacity>
           <View style={enrollContent_container}>
             <Text style={enrollContent_title}>제품명</Text>
             <InputFormA
