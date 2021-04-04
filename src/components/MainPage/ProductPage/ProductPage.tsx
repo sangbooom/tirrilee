@@ -24,52 +24,20 @@ const ProductPage: React.FC<ProductPageProps> = () => {
   const deviceWidth = Dimensions.get('window').width;
 
   const onPressTextFocus = useCallback((index: number) => {
-    if (index === 0) {
-      setNavInfo([
-        {
-          text: '에코백',
-          status: true,
-        },
-        {
-          text: '티셔츠',
-          status: false,
-        },
-        {
-          text: '기타물품',
-          status: false,
-        },
-      ]);
-    } else if (index === 1) {
-      setNavInfo([
-        {
-          text: '에코백',
-          status: false,
-        },
-        {
-          text: '티셔츠',
-          status: true,
-        },
-        {
-          text: '기타물품',
-          status: false,
-        },
-      ]);
-    } else if (index === 2) {
-      setNavInfo([
-        {
-          text: '에코백',
-          status: false,
-        },
-        {
-          text: '티셔츠',
-          status: false,
-        },
-        {
-          text: '기타물품',
-          status: true,
-        },
-      ]);
-    }
+    setNavInfo([
+      {
+        text: '에코백',
+        status: index === 0 ? true : false,
+      },
+      {
+        text: '티셔츠',
+        status: index === 1 ? true : false,
+      },
+      {
+        text: '기타물품',
+        status: index === 2 ? true : false,
+      },
+    ]);
   }, []);
 
   const wrapper = css`
