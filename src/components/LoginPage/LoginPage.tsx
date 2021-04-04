@@ -15,6 +15,7 @@ import {css} from '@emotion/native';
 import {ButtonTypeA} from '../../assets/css/Buttons/ButtonTypeA';
 import {InputFormA} from '../../assets/css/InputForm_A/InputFormA';
 import auth from '@react-native-firebase/auth';
+import LoadingPage from '../LoadingPage';
 
 interface LoginPageProps {
   navigation: any;
@@ -87,23 +88,6 @@ const LoginPage: React.FC<LoginPageProps> = ({navigation}) => {
 
   return (
     <React.Fragment>
-      {isloading && (
-        <View
-          style={{
-            position: 'absolute',
-            left: 0,
-            right: 0,
-            top: 0,
-            bottom: 0,
-            opacity: 0.5,
-            backgroundColor: 'gray',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 999,
-          }}>
-          <ActivityIndicator size="large" color="#0000ff" />
-        </View>
-      )}
       <ScrollView>
         <View style={wrapper}>
           <Image source={require('../../assets/image/header-logo-2x.png')} />
@@ -149,6 +133,7 @@ const LoginPage: React.FC<LoginPageProps> = ({navigation}) => {
           <Image source={require('../../assets/image/oo.png')} />
         </View>
       </ScrollView>
+      {isloading && <LoadingPage />}
     </React.Fragment>
   );
 };

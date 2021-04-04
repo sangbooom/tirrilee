@@ -9,7 +9,6 @@ import {
   NativeSyntheticEvent,
   TextInputChangeEventData,
   ScrollView,
-  ActivityIndicator,
 } from 'react-native';
 import {TopNavigation__back} from '../../assets/css/TopNavigation/TopNavigation';
 import {InputFormA} from '../../assets/css/InputForm_A/InputFormA';
@@ -20,8 +19,8 @@ import {
 import {css} from '@emotion/native';
 import {useSelector, useDispatch} from 'react-redux';
 import {actions, RootState} from '../../features';
-// import database from '@react-native-firebase/database';
 import auth from '@react-native-firebase/auth';
+import LoadingPage from '../LoadingPage';
 
 interface RegistePasswordProps {
   navigation?: any;
@@ -189,23 +188,6 @@ const RegisterPasswordPage: React.FC<RegistePasswordProps> = ({navigation}) => {
 
   return (
     <React.Fragment>
-      {isloading && (
-        <View
-          style={{
-            position: 'absolute',
-            left: 0,
-            right: 0,
-            top: 0,
-            bottom: 0,
-            opacity: 0.5,
-            backgroundColor: 'gray',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 999,
-          }}>
-          <ActivityIndicator size="large" color="#0000ff" />
-        </View>
-      )}
       <ScrollView style={wrapper}>
         <TopNavigation__back>
           <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -271,6 +253,7 @@ const RegisterPasswordPage: React.FC<RegistePasswordProps> = ({navigation}) => {
           )}
         </View>
       </ScrollView>
+      {isloading && <LoadingPage />}
     </React.Fragment>
   );
 };
