@@ -22,6 +22,7 @@ interface EnrollPageProps {
 }
 
 const EnrollPage: React.FC<EnrollPageProps> = ({navigation}) => {
+  const [productListLength, setProductListLength] = useState(0);
   const [isModalVisible, setModalVisible] = useState(true);
   const [productName, setProductName] = useState('');
   const [price, setPrice] = useState('');
@@ -30,12 +31,25 @@ const EnrollPage: React.FC<EnrollPageProps> = ({navigation}) => {
   const deviceWidth = Dimensions.get('window').width;
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener('tabPress', e => {
-      e.preventDefault();
-      setModalVisible(true);
-    });
+    const unsubscribe = navigation.addListener(
+      'tabPress',
+      (event: NativeSyntheticEvent<TextInputChangeEventData>) => {
+        event.preventDefault();
+        setModalVisible(true);
+      },
+    );
     return unsubscribe;
   }, [navigation]);
+
+  useEffect(() => {
+    database()
+      .ref('상품목록')
+      .on('value', snapshot => {
+        setProductListLength(
+          snapshot.val() ? Object.keys(snapshot.val()).length : 0,
+        );
+      });
+  }, []);
 
   const onChangeProductNameInput = (
     event: NativeSyntheticEvent<TextInputChangeEventData>,
@@ -59,7 +73,7 @@ const EnrollPage: React.FC<EnrollPageProps> = ({navigation}) => {
     try {
       database()
         .ref('상품목록')
-        .child('상품')
+        .child(productListLength.toString())
         .set({
           productName: productName,
           price: price,
