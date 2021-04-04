@@ -202,7 +202,10 @@ const ProductPage: React.FC<ProductPageProps> = () => {
                 style={css`
                   flex-direction: row;
                 `}>
-                <Text style={cardList_price}>{item.price}</Text>
+                <Text style={cardList_price}>
+                  {item.price.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}{' '}
+                  {/** 천원단위로 콤마찍기 */}
+                </Text>
                 <Text style={cardList_won}>원</Text>
               </View>
             </View>
