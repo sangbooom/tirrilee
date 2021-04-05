@@ -1,5 +1,11 @@
-# Assignment Test
+# 🧾 Assignment Test
 > 3/31, 4/2, 4/3 진행
+
+## 📚 사용 기술 스택
+- react-native (typescript, 함수형 컴포넌트), react-navigation
+- redux-toolkit, emotion.js
+- firbase (auth, realtime database)
+
 
 ## 💭 처음 제플린을 보고 생각한 구조
 
@@ -17,9 +23,9 @@ redux-toolkit과 Asyncstorage or keychain이 필요하다 생각했다. rtk는 �
 
 api는 만들 필요없고, 사용자의 이름, 이메일, 사진, 등록상품, 찜목록 그리고 전체 등록상품를 저장 할 저장소만 있으면 될 것 같았다. 스토리지에 넣을지 데이터베이스에 저장할지 고민한 결과 파이어베이스 리얼타임 데이터베이스에 넣을 결정을 했다. 안전하고 인증부분은 편하기 때문이다.   
 
-# 3/31
+# 📅 3/31
 
-#### 진행상황
+### 진행상황
 - 서비스 이해하기, 간단한 구조 설계,  프로젝트에 타입스크립트 적용
 
 - 라이브러리 (react-navigation, redux-toolkit, emotion, react-native-firebase) 설치
@@ -48,7 +54,19 @@ image를 불러오기 위해
 
 디자인이 web디자인이여서 RN에 css를 적용하면 react-native에 적용되지않는 css때문에 시간이 오래걸렸다. font-stretch: normal, box-shadow, letter-spacing: normal 등 RN에 맞게 고쳐야하는데 일단은 다 주석 처리했다.
 
-# 4/2
+# 📅 4/2
+
+### firebase auth 적용
+
+firebase를 사용하여 이메일 비밀번호를 가지고서 빠르게 로그인, 자동로그인, 회원가입을 할 수 있어서 도입했다. 회원 이름이나 프로필 url, 상품 목록은 firebase realtime database에 넣으려고 한다.
+
+### redux toolkit 도입
+
+사실 상태관리를 안해도 될정도의 규모일 것 같아서 처음에는 적용을 안시켰다가 조금씩 커지는 규모에 그냥 redux를 사용해서 상품정도는 redux로 관리하자고 생각했다.
+
+redux보다는 redux-toolkit을 사용하여 더 직관적이고 짧은 코드로 유지보수 용이하게 했다. redux-toolkit에 익숙하지않아 시간이 오래 걸렸다. 이전 프로젝트들은 ducks패턴에 컨테이너컴포넌트, 프레젠테이셔널 컴포넌트를 나눠 관심사를 분리시키고 props로 사용할 인자들을 일일히 다 넘겼었는데 redux-toolkit을 도입해보니까 훨씬 코드가 짧아지고 사용하기 편해졌다.
+
+하지만 redux-toolkit의 createSelector는 아직 사용에 미숙해서 useSelector를 사용했다.
 
 ### 특이사항
 
@@ -77,21 +95,11 @@ style={{
 
 등 많은 방법을 적용시켜봤지만 잘 되지 않아 넘어갔다.
 
-### firebase auth 적용
+# 📅 4/3
 
-firebase를 사용하여 이메일 비밀번호를 가지고서 빠르게 로그인, 자동로그인, 회원가입을 할 수 있어서 도입했다. 회원 이름이나 프로필 url, 상품 목록은 firebase realtime database에 넣으려고 한다.
+## 구현 시나리오
+파이어베이스 리얼타임 데이터베이스에 등록한 상품을 저장시킨다. 저장시킨 순간 상품목록을 업데이트 시키고 사용자들은 실시간으로 등록된 상품을 볼 수 있게 한다.   
 
-### redux toolkit 도입
-
-사실 상태관리를 안해도 될정도의 규모일 것 같아서 처음에는 적용을 안시켰다가 조금씩 커지는 규모에 그냥 redux를 사용해서 상품정도는 redux로 관리하자고 생각했다.
-
-redux보다는 redux-toolkit을 사용하여 더 직관적이고 짧은 코드로 유지보수 용이하게 했다. redux-toolkit에 익숙하지않아 시간이 오래 걸렸다. 이전 프로젝트들은 ducks패턴에 컨테이너컴포넌트, 프레젠테이셔널 컴포넌트를 나눠 관심사를 분리시키고 props로 사용할 인자들을 일일히 다 넘겼었는데 redux-toolkit을 도입해보니까 훨씬 코드가 짧아지고 사용하기 편해졌다.
-
-하지만 redux-toolkit의 createSelector는 아직 사용에 미숙해서 useSelector를 사용했다..
-
-# 4/3
-
-구현 시나리오 : 파이어베이스 리얼타임 데이터베이스에 등록한 상품을 저장시킨다. 저장시킨 순간 상품목록을 업데이트 시키고 사용자들은 실시간으로 등록된 상품을 볼 수 있게 한다.    
 상품 목록은 데이터베이스에서 상품데이터를 배열로 가져와 map으로 보여주고, flatList의 스크롤이 바닥에 닿을때 쯤 적당한 갯수의 상품 데이터를 불러오게한다.
 
 
@@ -149,7 +157,9 @@ screenOptions={({route}) => ({
 }}>
 ```
 
-## 과제테스트를 하고 느낀점
+<br />
+
+# 👩🏻‍💻 과제테스트를 하고 느낀점
 
 일단 디자인을 보고 개발을 하니 혼자 해커톤 하는 것 같았다. 스스로 해결해보려고 많이 하다보니 사고의 폭이 넓어진 것 같다.
 
@@ -159,10 +169,11 @@ screenOptions={({route}) => ({
 
 설계와 디자인에 대한 고민을 많이하다보니 개발속도가 매우 느렸다. 그래서 많은 기능들을 구현하지 못했다.
 
+<br />
 
-## 이어서 계속 개발하기
+# 과제테스트가 끝나고 이어서 개발하기
 
-### TextInput 안에 텍스트?
+## 💭 TextInput 안에 텍스트?
 
 ![image](https://user-images.githubusercontent.com/43921054/113576906-59efa500-965b-11eb-84b3-9844d173a3db.png)
 
@@ -204,7 +215,7 @@ screenOptions={({route}) => ({
 </View>
 ```
 
-### Infinity Scroll 구현방법
+## 💭 Infinity Scroll 구현방법
 
 > 데이터베이스에 20000만개의 상품이 등록 되어있다고 가정한다. flatList에서 1000개씩의 데이터를 꺼내오는 상황이다.
 
