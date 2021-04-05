@@ -1,6 +1,14 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect, useCallback} from 'react';
-import {View, Text, Image, Dimensions, FlatList, Alert} from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  Dimensions,
+  FlatList,
+  RefreshControl,
+} from 'react-native';
 import {css} from '@emotion/native';
 import database from '@react-native-firebase/database';
 import LoadingPage from '../../LoadingPage';
@@ -15,7 +23,14 @@ interface productListType {
   imageSource: string;
 }
 
+const wait = (timeout: any) => {
+  return new Promise((resolve: any) => {
+    setTimeout(resolve, timeout);
+  });
+};
+
 const ProductPage: React.FC<ProductPageProps> = () => {
+  const [refreshing, setRefreshing] = useState(false);
   const [beginIndex, setBeginIndex] = useState(0);
   const [endIndex, setEndIndex] = useState(4);
   const [isLoading, setLoading] = useState(false);
@@ -42,17 +57,12 @@ const ProductPage: React.FC<ProductPageProps> = () => {
     database()
       .ref('상품목록')
       .on('value', snapshot => {
-        setProductList(snapshot.val().slice(0, endIndex));
+        setProductList(snapshot.val().slice(beginIndex, endIndex));
         setBeginIndex(prev => prev + 4);
         setEndIndex(prev => prev + 4);
         setLoading(false);
       });
   }, []);
-
-  useEffect(() => {
-    console.log('beginIndex', beginIndex);
-    console.log('endIndex', endIndex);
-  }, [beginIndex, endIndex]);
 
   const onPressTextFocus = useCallback((index: number) => {
     setNavInfo([
@@ -69,6 +79,22 @@ const ProductPage: React.FC<ProductPageProps> = () => {
         status: index === 2 ? true : false,
       },
     ]);
+  }, []);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    setBeginIndex(0);
+    setEndIndex(4);
+    wait(2000).then(() => {
+      database()
+        .ref('상품목록')
+        .on('value', snapshot => {
+          setProductList(snapshot.val().slice(beginIndex, endIndex));
+          setBeginIndex(prev => prev + 4);
+          setEndIndex(prev => prev + 4);
+          setRefreshing(false);
+        });
+    });
   }, []);
 
   const onEndReachedHandler = () => {
@@ -189,8 +215,11 @@ const ProductPage: React.FC<ProductPageProps> = () => {
         </View>
         <FlatList
           // showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
           onEndReached={onEndReachedHandler}
-          onEndReachedThreshold={0.1}
+          onEndReachedThreshold={0}
           numColumns={2}
           keyExtractor={(item, index) => {
             return index.toString();
