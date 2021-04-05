@@ -158,3 +158,105 @@ screenOptions={({route}) => ({
 개인적으로 css가 가장 어려웠다. 다른 기종에 맞게 반응형 고려, css 네이밍, 규칙 통일하는 연습부터 해야겠다. 
 
 설계와 디자인에 대한 고민을 많이하다보니 개발속도가 매우 느렸다. 그래서 많은 기능들을 구현하지 못했다.
+
+
+## 이어서 계속 개발하기
+
+### TextInput 안에 텍스트?
+
+![image](https://user-images.githubusercontent.com/43921054/113576906-59efa500-965b-11eb-84b3-9844d173a3db.png)
+
+위와같은 인풋창 안에 텍스트를 추가하기 위해선 단순하게 '원'이라는 텍스트를 `position:absolute`를 통해 원하는 위치에 두는 방법밖에 생각나지 않았다. 
+
+시간을 두고 더 생각해본 결과, 단순히 View 안에 TextInput과 Text가 있는 구조라는 것을 깨달았다..
+
+```jsx
+<View
+  style={css`
+    width: 334px;
+    height: 48px;
+    flex-direction: row;
+    padding: 14px 0 14px 12px;
+    margin-bottom: 24px;
+    border-radius: 8px;
+    border: solid 1px #eaeaea;
+  `}>
+  <TextInput
+    textAlignVertical="top"
+    style={css`
+      width: 288px;
+      height: 20px;
+      padding: 0;
+    `}
+    placeholder="가격 입력"
+    placeholderTextColor="#bfbfbf"
+  />
+  <Text
+    style={css`
+      font-family: 'NotoSansKR-Regular';
+      font-size: 14px;
+      line-height: 20px;
+      text-align: left;
+      color: #000000;
+    `}>
+    원
+  </Text>
+</View>
+```
+
+### Infinity Scroll 구현방법
+
+> 데이터베이스에 20000만개의 상품이 등록 되어있다고 가정한다. flatList에서 1000개씩의 데이터를 꺼내오는 상황이다.
+
+```jsx
+useEffect(() => {
+  setLoading(true);
+  database()
+    .ref('상품목록')
+    .on('value', snapshot => {
+      setProductList(snapshot.val().slice(beginIndex, endIndex));
+      setBeginIndex(prev => prev + 1000);
+      setEndIndex(prev => prev + 1000);
+      setLoading(false);
+    });
+}, []);
+```
+
+처음에 `beginIndex`를 시작할 인덱스만큼, `endIndex`는 꺼내올 데이터의 갯수만큼 초기화를 시켜준다.
+
+그 후에 `endIndex - beginIndex + 1`만큼 꺼내온 후에 다음 가져올 데이터의 수만큼 인덱스를 더해준다.
+
+
+```jsx
+<FlatList
+  ...
+  onEndReached={onEndReachedHandler}
+  onEndReachedThreshold={0}
+  ...
+  data={productList}
+  ...
+```
+
+그 후에 스크롤이 임계값 0(스크롤의 끝)에 도달하면 `onEndReachedHandler` 함수를 발생시켜서 
+
+```jsx
+const onEndReachedHandler = () => {
+  setLoading(true);
+  database()
+    .ref('상품목록')
+    .on('value', snapshot => {
+      if (productList.length < beginIndex) {
+        setLoading(false);
+        return;
+      }
+      setProductList(
+        productList.concat(snapshot.val().slice(beginIndex, endIndex)),
+      );
+      setBeginIndex(prev => prev + 1000);
+      setEndIndex(prev => prev + 1000);
+      setLoading(false);
+    });
+};
+```
+
+기존에 state가 가지고있던 데이터에 보여줄 데이터를 더해줘서 다시 화면에 렌더링하게 된다.
