@@ -79,8 +79,6 @@ const EnrollPage: React.FC<EnrollPageProps> = ({navigation}) => {
         console.log('User tapped custom button: ', response.customButton);
         Alert.alert(response.customButton);
       } else {
-        // You can also display the image using data:
-        // const source = { uri: 'data:image/jpeg;base64,' + response.data };
         setImageSource(response.uri);
       }
     });
@@ -182,13 +180,21 @@ const EnrollPage: React.FC<EnrollPageProps> = ({navigation}) => {
     color: #000000;
   `;
 
+  const imagePicker_text = css`
+    font-family: 'NotoSansKR-Regular';
+    font-size: 14px;
+    line-height: 20px;
+    text-align: left;
+    color: #bfbfbf;
+  `;
+
   const onToggleModalVisible = useCallback(() => {
     setModalVisible(prev => !prev);
     setProductName('');
     setPrice('');
     setDescription('');
     setImageSource('');
-    navigation.navigate('홈');
+    navigation.navigate('상품목록');
   }, [navigation]);
 
   return (
@@ -220,7 +226,24 @@ const EnrollPage: React.FC<EnrollPageProps> = ({navigation}) => {
             style={enrollPhoto}
             activeOpacity={1}
             onPress={showImagePicker}>
-            {imageSource === '' ? null : (
+            {imageSource === '' ? (
+              <View
+                style={css`
+                  height: 324px;
+                  justify-content: center;
+                  align-items: center;
+                `}>
+                <Image
+                  source={require('../../../assets/image/plus-3x.png')}
+                  style={{
+                    width: 38,
+                    height: 38,
+                    marginBottom: 9,
+                  }}
+                />
+                <Text style={imagePicker_text}>사진을 등록하세요.</Text>
+              </View>
+            ) : (
               <Image
                 source={{uri: imageSource}}
                 style={{

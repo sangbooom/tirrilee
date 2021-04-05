@@ -16,6 +16,8 @@ interface productListType {
 }
 
 const ProductPage: React.FC<ProductPageProps> = () => {
+  const [beginIndex, setBeginIndex] = useState(0);
+  const [endIndex, setEndIndex] = useState(4);
   const [isLoading, setLoading] = useState(false);
   const [productList, setProductList] = useState<Array<productListType>>([]);
   const [navInfo, setNavInfo] = useState([
@@ -40,10 +42,17 @@ const ProductPage: React.FC<ProductPageProps> = () => {
     database()
       .ref('상품목록')
       .on('value', snapshot => {
-        setProductList(snapshot.val());
+        setProductList(snapshot.val().slice(0, endIndex));
+        setBeginIndex(prev => prev + 4);
+        setEndIndex(prev => prev + 4);
         setLoading(false);
       });
   }, []);
+
+  useEffect(() => {
+    console.log('beginIndex', beginIndex);
+    console.log('endIndex', endIndex);
+  }, [beginIndex, endIndex]);
 
   const onPressTextFocus = useCallback((index: number) => {
     setNavInfo([
@@ -61,6 +70,25 @@ const ProductPage: React.FC<ProductPageProps> = () => {
       },
     ]);
   }, []);
+
+  const onEndReachedHandler = () => {
+    console.log('닿았다');
+    setLoading(true);
+    database()
+      .ref('상품목록')
+      .on('value', snapshot => {
+        if (productList.length < beginIndex) {
+          setLoading(false);
+          return;
+        }
+        setProductList(
+          productList.concat(snapshot.val().slice(beginIndex, endIndex)),
+        );
+        setBeginIndex(prev => prev + 4);
+        setEndIndex(prev => prev + 4);
+        setLoading(false);
+      });
+  };
 
   const wrapper = css`
     flex: 1;
@@ -161,6 +189,8 @@ const ProductPage: React.FC<ProductPageProps> = () => {
         </View>
         <FlatList
           // showsVerticalScrollIndicator={false}
+          onEndReached={onEndReachedHandler}
+          onEndReachedThreshold={0.1}
           numColumns={2}
           keyExtractor={(item, index) => {
             return index.toString();
@@ -196,7 +226,22 @@ const ProductPage: React.FC<ProductPageProps> = () => {
                   marginBottom: 8,
                 }}
               />
-              <Text style={cardList_productName}>{item.productName}</Text>
+              <View
+                style={css`
+                  flex-direction: row;
+                `}>
+                <Text
+                  style={[
+                    cardList_productName,
+                    css`
+                      color: #226bef;
+                    `,
+                  ]}>
+                  [에코백]{' '}
+                </Text>
+                <Text style={cardList_productName}>{item.productName}</Text>
+              </View>
+
               <RatingPage />
               <View
                 style={css`
