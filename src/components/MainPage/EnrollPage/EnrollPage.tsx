@@ -10,6 +10,7 @@ import {
   TextInputChangeEventData,
   Alert,
   ScrollView,
+  TextInput,
 } from 'react-native';
 import Modal from 'react-native-modal';
 import {css} from '@emotion/native';
@@ -266,15 +267,40 @@ const EnrollPage: React.FC<EnrollPageProps> = ({navigation}) => {
             />
 
             <Text style={enrollContent_title}>가격</Text>
-            <InputFormA
+
+            <View
               style={css`
+                width: 334px;
+                height: 48px;
+                flex-direction: row;
+                padding: 14px 0 14px 12px;
                 margin-bottom: 24px;
-              `}
-              placeholder="가격 입력"
-              placeholderTextColor="#bfbfbf"
-              onChange={onChangePriceInput}
-              value={price}
-            />
+                border-radius: 8px;
+                border: solid 1px #eaeaea;
+              `}>
+              <TextInput
+                textAlignVertical="top"
+                style={css`
+                  width: 288px;
+                  height: 20px;
+                  padding: 0;
+                `}
+                placeholder="가격 입력"
+                placeholderTextColor="#bfbfbf"
+                onChange={onChangePriceInput}
+                value={price}
+              />
+              <Text
+                style={css`
+                  font-family: 'NotoSansKR-Regular';
+                  font-size: 14px;
+                  line-height: 20px;
+                  text-align: left;
+                  color: #000000;
+                `}>
+                원
+              </Text>
+            </View>
 
             <Text style={enrollContent_title}>상세 설명</Text>
             <InputFormB
