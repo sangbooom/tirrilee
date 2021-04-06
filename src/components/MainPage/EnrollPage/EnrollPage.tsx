@@ -212,7 +212,8 @@ const EnrollPage: React.FC<EnrollPageProps> = ({navigation}) => {
             />
           </TouchableOpacity>
           <Text style={topNavigation_title}>등록하기</Text>
-          {productName.length > 0 &&
+          {imageSource !== '' &&
+          productName.length > 0 &&
           price.length > 0 &&
           description.length > 0 ? (
             <Text style={topNavigation__true} onPress={onSubmitDatabase}>
