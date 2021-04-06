@@ -88,19 +88,19 @@ const EnrollPage: React.FC<EnrollPageProps> = ({navigation}) => {
   const onChangeProductNameInput = (
     event: NativeSyntheticEvent<TextInputChangeEventData>,
   ) => {
-    setProductName(event.nativeEvent.text);
+    setProductName(event.nativeEvent.text.trim());
   };
 
   const onChangePriceInput = (
     event: NativeSyntheticEvent<TextInputChangeEventData>,
   ) => {
-    setPrice(event.nativeEvent.text);
+    setPrice(event.nativeEvent.text.trim());
   };
 
   const onChangeDescriptionInput = (
     event: NativeSyntheticEvent<TextInputChangeEventData>,
   ) => {
-    setDescription(event.nativeEvent.text);
+    setDescription(event.nativeEvent.text.trim());
   };
 
   const onSubmitDatabase = () => {
