@@ -88,19 +88,19 @@ const EnrollPage: React.FC<EnrollPageProps> = ({navigation}) => {
   const onChangeProductNameInput = (
     event: NativeSyntheticEvent<TextInputChangeEventData>,
   ) => {
-    setProductName(event.nativeEvent.text.trim());
+    setProductName(event.nativeEvent.text);
   };
 
   const onChangePriceInput = (
     event: NativeSyntheticEvent<TextInputChangeEventData>,
   ) => {
-    setPrice(event.nativeEvent.text.trim());
+    setPrice(event.nativeEvent.text);
   };
 
   const onChangeDescriptionInput = (
     event: NativeSyntheticEvent<TextInputChangeEventData>,
   ) => {
-    setDescription(event.nativeEvent.text.trim());
+    setDescription(event.nativeEvent.text);
   };
 
   const onSubmitDatabase = () => {
@@ -110,9 +110,9 @@ const EnrollPage: React.FC<EnrollPageProps> = ({navigation}) => {
         .child(productListLength.toString())
         .set({
           imageSource: imageSource,
-          productName: productName,
-          price: price,
-          description: description,
+          productName: productName.trim(),
+          price: price.trim(),
+          description: description.trim(),
         })
         .then(() =>
           Alert.alert('완료', '상품이 등록되었습니다.', [
