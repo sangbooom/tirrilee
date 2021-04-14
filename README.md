@@ -269,3 +269,6 @@ const onEndReachedHandler = () => {
 ```
 
 기존에 state가 가지고있던 데이터에 보여줄 데이터를 더해줘서 다시 화면에 렌더링하게 된다.
+
+![ezgif com-gif-maker](https://user-images.githubusercontent.com/43921054/114665658-436edb00-9d38-11eb-9982-87d4bd21dd9a.gif)
+
