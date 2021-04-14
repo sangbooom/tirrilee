@@ -13,6 +13,7 @@ import {css} from '@emotion/native';
 import database from '@react-native-firebase/database';
 import LoadingPage from '../../LoadingPage';
 import RatingPage from '../../RatingPage';
+import Skeleton from '../../../commons/Skeleton';
 
 interface ProductPageProps {}
 
@@ -34,6 +35,7 @@ const ProductPage: React.FC<ProductPageProps> = () => {
   const [beginIndex, setBeginIndex] = useState(0);
   const [endIndex, setEndIndex] = useState(4);
   const [isLoading, setLoading] = useState(false);
+  const [isGetDataFinish, setGetDataFinish] = useState(false);
   const [productList, setProductList] = useState<Array<productListType>>([]);
   const [navInfo, setNavInfo] = useState([
     {
@@ -54,6 +56,7 @@ const ProductPage: React.FC<ProductPageProps> = () => {
 
   useEffect(() => {
     setLoading(true);
+    setGetDataFinish(true);
     database()
       .ref('상품목록')
       .on('value', snapshot => {
@@ -61,6 +64,7 @@ const ProductPage: React.FC<ProductPageProps> = () => {
         setBeginIndex(prev => prev + 4);
         setEndIndex(prev => prev + 4);
         setLoading(false);
+        setGetDataFinish(false);
       });
   }, []);
 
@@ -213,78 +217,83 @@ const ProductPage: React.FC<ProductPageProps> = () => {
             </React.Fragment>
           ))}
         </View>
-        <FlatList
-          // showsVerticalScrollIndicator={false}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
-          onEndReached={onEndReachedHandler}
-          onEndReachedThreshold={0}
-          numColumns={2}
-          keyExtractor={(item, index) => {
-            return index.toString();
-          }}
-          data={productList}
-          renderItem={({item, index}) => (
-            <View
-              key={index}
-              style={[
-                index === productList.length - 1 &&
-                  css`
-                    margin-bottom: 30px;
-                  `,
-                index % 2 === 0 &&
-                  css`
-                    padding-right: 6px;
-                  `,
-                index % 2 === 1 &&
-                  css`
-                    padding-left: 6px;
-                  `,
-                {
-                  width: '50%',
-                  height: 232,
-                },
-              ]}>
-              <Image
-                source={{uri: item.imageSource}}
-                style={{
-                  width: '100%',
-                  height: 150,
-                  borderRadius: 6,
-                  marginBottom: 8,
-                }}
-              />
+        {isLoading && isGetDataFinish ? (
+          new Array(4).fill(1).map((_, index) => {
+            return <Skeleton key={index} />;
+          })
+        ) : (
+          <FlatList
+            showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+            onEndReached={onEndReachedHandler}
+            onEndReachedThreshold={0}
+            numColumns={2}
+            keyExtractor={(item, index) => {
+              return index.toString();
+            }}
+            data={productList}
+            renderItem={({item, index}) => (
               <View
-                style={css`
-                  flex-direction: row;
-                `}>
-                <Text
-                  style={[
-                    cardList_productName,
+                key={index}
+                style={[
+                  index === productList.length - 1 &&
                     css`
-                      color: #226bef;
+                      margin-bottom: 30px;
                     `,
-                  ]}>
-                  [에코백]{' '}
-                </Text>
-                <Text style={cardList_productName}>{item.productName}</Text>
-              </View>
+                  index % 2 === 0 &&
+                    css`
+                      padding-right: 6px;
+                    `,
+                  index % 2 === 1 &&
+                    css`
+                      padding-left: 6px;
+                    `,
+                  {
+                    width: '50%',
+                    height: 232,
+                  },
+                ]}>
+                <Image
+                  source={{uri: item.imageSource}}
+                  style={{
+                    width: '100%',
+                    height: 150,
+                    borderRadius: 6,
+                    marginBottom: 8,
+                  }}
+                />
+                <View
+                  style={css`
+                    flex-direction: row;
+                  `}>
+                  <Text
+                    style={[
+                      cardList_productName,
+                      css`
+                        color: #226bef;
+                      `,
+                    ]}>
+                    [에코백]{' '}
+                  </Text>
+                  <Text style={cardList_productName}>{item.productName}</Text>
+                </View>
 
-              <RatingPage />
-              <View
-                style={css`
-                  flex-direction: row;
-                `}>
-                <Text style={cardList_price}>
-                  {item.price.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}{' '}
-                  {/** 천원단위로 콤마찍기 */}
-                </Text>
-                <Text style={cardList_won}>원</Text>
+                <RatingPage />
+                <View
+                  style={css`
+                    flex-direction: row;
+                  `}>
+                  <Text style={cardList_price}>
+                    {item.price.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}{' '}
+                  </Text>
+                  <Text style={cardList_won}>원</Text>
+                </View>
               </View>
-            </View>
-          )}
-        />
+            )}
+          />
+        )}
       </View>
       {isLoading && <LoadingPage />}
     </React.Fragment>
