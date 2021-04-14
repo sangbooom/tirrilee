@@ -37,6 +37,7 @@ const ProductPage: React.FC<ProductPageProps> = () => {
   const [isLoading, setLoading] = useState(false);
   const [isGetDataFinish, setGetDataFinish] = useState(false);
   const [productList, setProductList] = useState<Array<productListType>>([]);
+  const [textWhenTrue, setTextWhenTrue] = useState('');
   const [navInfo, setNavInfo] = useState([
     {
       text: '에코백',
@@ -55,20 +56,87 @@ const ProductPage: React.FC<ProductPageProps> = () => {
   const deviceWidth = Dimensions.get('window').width;
 
   useEffect(() => {
+    // setTextWhenTrue(navInfo.filter(info => info.status === true)[0].text);
+    console.log(
+      'navInfo.filter(info => info.status === true)[0].text',
+      navInfo.filter(info => info.status === true)[0].text,
+    );
+  }, [navInfo]);
+
+  useEffect(() => {
+    console.log('beginIndex', beginIndex);
+  }, [beginIndex]);
+
+  useEffect(() => {
+    console.log('endIndex', endIndex);
+  }, [endIndex]);
+
+  useEffect(() => {
     setLoading(true);
     setGetDataFinish(true);
     database()
       .ref('상품목록')
       .on('value', snapshot => {
-        setProductList(snapshot.val().slice(beginIndex, endIndex));
-        setBeginIndex(prev => prev + 4);
-        setEndIndex(prev => prev + 4);
+        console.log('snapshot.val()', snapshot.val());
+        setProductList(
+          snapshot.val() &&
+            snapshot
+              .val()
+              [navInfo.filter(info => info.status === true)[0].text].slice(
+                beginIndex,
+                endIndex,
+              ),
+        );
+        // setBeginIndex(prev => prev + 4);
+        // setEndIndex(prev => prev + 4);
         setLoading(false);
         setGetDataFinish(false);
       });
   }, []);
 
-  const onPressTextFocus = useCallback((index: number) => {
+  useEffect(() => {
+    setLoading(true);
+    setBeginIndex(0);
+    setEndIndex(4);
+    database()
+      .ref('상품목록')
+      .on('value', snapshot => {
+        console.log('snapshot.val()', snapshot.val());
+        setProductList(
+          snapshot.val() &&
+            snapshot
+              .val()
+              [navInfo.filter(info => info.status === true)[0].text].slice(
+                beginIndex,
+                endIndex,
+              ),
+        );
+        setLoading(false);
+      });
+  }, [navInfo]);
+
+  useEffect(() => {
+    console.log('productList', productList);
+  }, [productList]);
+
+  // const onPressTextFocus = useCallback((index: number) => {
+  //   setNavInfo([
+  //     {
+  //       text: '에코백',
+  //       status: index === 0 ? true : false,
+  //     },
+  //     {
+  //       text: '티셔츠',
+  //       status: index === 1 ? true : false,
+  //     },
+  //     {
+  //       text: '기타물품',
+  //       status: index === 2 ? true : false,
+  //     },
+  //   ]);
+  // }, []);
+
+  const onPressTextFocus = (index: number) => {
     setNavInfo([
       {
         text: '에코백',
@@ -83,7 +151,7 @@ const ProductPage: React.FC<ProductPageProps> = () => {
         status: index === 2 ? true : false,
       },
     ]);
-  }, []);
+  };
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -93,7 +161,15 @@ const ProductPage: React.FC<ProductPageProps> = () => {
       database()
         .ref('상품목록')
         .on('value', snapshot => {
-          setProductList(snapshot.val().slice(beginIndex, endIndex));
+          setProductList(
+            snapshot.val() &&
+              snapshot
+                .val()
+                [navInfo.filter(info => info.status === true)[0].text].slice(
+                  beginIndex,
+                  endIndex,
+                ),
+          );
           setBeginIndex(prev => prev + 4);
           setEndIndex(prev => prev + 4);
           setRefreshing(false);
@@ -112,7 +188,15 @@ const ProductPage: React.FC<ProductPageProps> = () => {
           return;
         }
         setProductList(
-          productList.concat(snapshot.val().slice(beginIndex, endIndex)),
+          snapshot.val() &&
+            productList.concat(
+              snapshot
+                .val()
+                [navInfo.filter(info => info.status === true)[0].text].slice(
+                  beginIndex,
+                  endIndex,
+                ),
+            ),
         );
         setBeginIndex(prev => prev + 4);
         setEndIndex(prev => prev + 4);
@@ -218,9 +302,11 @@ const ProductPage: React.FC<ProductPageProps> = () => {
           ))}
         </View>
         {isLoading && isGetDataFinish ? (
-          new Array(4).fill(1).map((_, index) => {
-            return <Skeleton key={index} />;
-          })
+          new Array(productList && productList.length)
+            .fill(1)
+            .map((_, index) => {
+              return <Skeleton key={index} />;
+            })
         ) : (
           <FlatList
             showsVerticalScrollIndicator={false}
@@ -275,7 +361,9 @@ const ProductPage: React.FC<ProductPageProps> = () => {
                         color: #226bef;
                       `,
                     ]}>
-                    [에코백]{' '}
+                    {`[${
+                      navInfo.filter(info => info.status === true)[0].text
+                    }] `}
                   </Text>
                   <Text style={cardList_productName}>{item.productName}</Text>
                 </View>

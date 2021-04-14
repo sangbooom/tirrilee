@@ -31,15 +31,40 @@ const EnrollPage: React.FC<EnrollPageProps> = ({navigation}) => {
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
   const [imageSource, setImageSource] = useState('');
+  const [textWhenTrue, setTextWhenTrue] = useState('');
+  const [category, setCategory] = useState([
+    {
+      text: '에코백',
+      status: true,
+    },
+    {
+      text: '티셔츠',
+      status: false,
+    },
+    {
+      text: '기타물품',
+      status: false,
+    },
+  ]);
 
   const deviceWidth = Dimensions.get('window').width;
+
+  useEffect(() => {
+    setTextWhenTrue(category.filter(info => info.status === true)[0].text);
+  }, [category]);
 
   useEffect(() => {
     database()
       .ref('상품목록')
       .on('value', snapshot => {
         setProductListLength(
-          snapshot.val() ? Object.keys(snapshot.val()).length : 0,
+          snapshot.val()
+            ? Object.keys(
+                snapshot.val()[
+                  category.filter(info => info.status === true)[0].text
+                ],
+              ).length
+            : 0,
         );
       });
   }, []);
@@ -55,10 +80,6 @@ const EnrollPage: React.FC<EnrollPageProps> = ({navigation}) => {
     return unsubscribe;
   }, [navigation]);
 
-  useEffect(() => {
-    console.log('imageSource', imageSource);
-  }, [imageSource]);
-
   const options = {
     title: '프로필 변경',
     cancelButtonTitle: '취소',
@@ -69,6 +90,23 @@ const EnrollPage: React.FC<EnrollPageProps> = ({navigation}) => {
       path: 'images',
     },
   };
+
+  const onPressTextFocus = useCallback((index: number) => {
+    setCategory([
+      {
+        text: '에코백',
+        status: index === 0 ? true : false,
+      },
+      {
+        text: '티셔츠',
+        status: index === 1 ? true : false,
+      },
+      {
+        text: '기타물품',
+        status: index === 2 ? true : false,
+      },
+    ]);
+  }, []);
 
   const showImagePicker = () => {
     ImagePicker.showImagePicker(options, (response: any) => {
@@ -106,7 +144,9 @@ const EnrollPage: React.FC<EnrollPageProps> = ({navigation}) => {
   const onSubmitDatabase = () => {
     try {
       database()
-        .ref('상품목록')
+        .ref(
+          `/상품목록/${category.filter(info => info.status === true)[0].text}`,
+        )
         .child(productListLength.toString())
         .set({
           imageSource: imageSource,
@@ -185,6 +225,43 @@ const EnrollPage: React.FC<EnrollPageProps> = ({navigation}) => {
     font-family: 'NotoSansKR-Regular';
     font-size: 14px;
     line-height: 20px;
+    text-align: left;
+    color: #bfbfbf;
+  `;
+
+  const chips_container = css`
+    flex-direction: row;
+  `;
+
+  const chips__focused = css`
+    height: 30px;
+    margin: 12px 12px 28px 0;
+    padding: 6px 12px;
+    border-radius: 18px;
+    background-color: #226bef;
+  `;
+
+  const chips = css`
+    height: 30px;
+    margin: 12px 12px 28px 0;
+    padding: 6px 12px;
+    border-radius: 18px;
+    border: solid 1px #bfbfbf;
+    background-color: #ffffff;
+  `;
+
+  const chips_text__focused = css`
+    font-family: 'NotoSansKR-Medium';
+    font-size: 12px;
+    line-height: 18px;
+    text-align: left;
+    color: #ffffff;
+  `;
+
+  const chips_text = css`
+    font-family: 'NotoSansKR-Medium';
+    font-size: 12px;
+    line-height: 18px;
     text-align: left;
     color: #bfbfbf;
   `;
@@ -315,7 +392,20 @@ const EnrollPage: React.FC<EnrollPageProps> = ({navigation}) => {
               onChange={onChangeDescriptionInput}
               value={description}
             />
-            {/* <Text style={enrollContent_title}>카테고리</Text> */}
+            <Text style={enrollContent_title}>카테고리</Text>
+            <View style={chips_container}>
+              {category.map((info, index) => (
+                <TouchableOpacity
+                  style={info.status ? chips__focused : chips}
+                  key={index}
+                  onPress={() => onPressTextFocus(index)}
+                  activeOpacity={1}>
+                  <Text style={info.status ? chips_text__focused : chips_text}>
+                    {info.text}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
           </View>
         </ScrollView>
       </View>
