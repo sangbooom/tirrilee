@@ -37,7 +37,7 @@ const ProductPage: React.FC<ProductPageProps> = () => {
   const [isLoading, setLoading] = useState(false);
   const [isGetDataFinish, setGetDataFinish] = useState(false);
   const [productList, setProductList] = useState<Array<productListType>>([]);
-  const [textWhenTrue, setTextWhenTrue] = useState('');
+  // const [textWhenTrue, setTextWhenTrue] = useState('');
   const [navInfo, setNavInfo] = useState([
     {
       text: '에코백',
@@ -55,21 +55,17 @@ const ProductPage: React.FC<ProductPageProps> = () => {
 
   const deviceWidth = Dimensions.get('window').width;
 
+  // useEffect(() => {
+  //   // setTextWhenTrue(navInfo.filter(info => info.status === true)[0].text);
+  //   // console.log(
+  //   //   'navInfo.filter(info => info.status === true)[0].text',
+  //   //   navInfo.filter(info => info.status === true)[0].text,
+  //   // );
+  // }, [navInfo]);
+
   useEffect(() => {
-    // setTextWhenTrue(navInfo.filter(info => info.status === true)[0].text);
-    console.log(
-      'navInfo.filter(info => info.status === true)[0].text',
-      navInfo.filter(info => info.status === true)[0].text,
-    );
+    console.log('navInfo', navInfo);
   }, [navInfo]);
-
-  useEffect(() => {
-    console.log('beginIndex', beginIndex);
-  }, [beginIndex]);
-
-  useEffect(() => {
-    console.log('endIndex', endIndex);
-  }, [endIndex]);
 
   useEffect(() => {
     setLoading(true);
@@ -77,7 +73,7 @@ const ProductPage: React.FC<ProductPageProps> = () => {
     database()
       .ref('상품목록')
       .on('value', snapshot => {
-        console.log('snapshot.val()', snapshot.val());
+        console.log('처음 조회한 값 => ', snapshot.val());
         setProductList(
           snapshot.val() &&
             snapshot
@@ -87,8 +83,8 @@ const ProductPage: React.FC<ProductPageProps> = () => {
                 endIndex,
               ),
         );
-        // setBeginIndex(prev => prev + 4);
-        // setEndIndex(prev => prev + 4);
+        setBeginIndex(prev => prev + 4);
+        setEndIndex(prev => prev + 4);
         setLoading(false);
         setGetDataFinish(false);
       });
@@ -101,7 +97,7 @@ const ProductPage: React.FC<ProductPageProps> = () => {
     database()
       .ref('상품목록')
       .on('value', snapshot => {
-        console.log('snapshot.val()', snapshot.val());
+        console.log('상태 바꿨을때의 값 => ', snapshot.val());
         setProductList(
           snapshot.val() &&
             snapshot
@@ -119,24 +115,7 @@ const ProductPage: React.FC<ProductPageProps> = () => {
     console.log('productList', productList);
   }, [productList]);
 
-  // const onPressTextFocus = useCallback((index: number) => {
-  //   setNavInfo([
-  //     {
-  //       text: '에코백',
-  //       status: index === 0 ? true : false,
-  //     },
-  //     {
-  //       text: '티셔츠',
-  //       status: index === 1 ? true : false,
-  //     },
-  //     {
-  //       text: '기타물품',
-  //       status: index === 2 ? true : false,
-  //     },
-  //   ]);
-  // }, []);
-
-  const onPressTextFocus = (index: number) => {
+  const onPressTextFocus = useCallback((index: number) => {
     setNavInfo([
       {
         text: '에코백',
@@ -151,7 +130,7 @@ const ProductPage: React.FC<ProductPageProps> = () => {
         status: index === 2 ? true : false,
       },
     ]);
-  };
+  }, []);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);

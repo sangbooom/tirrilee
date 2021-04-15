@@ -58,7 +58,7 @@ const EnrollPage: React.FC<EnrollPageProps> = ({navigation}) => {
       .ref('상품목록')
       .on('value', snapshot => {
         setProductListLength(
-          snapshot.val()
+          snapshot.val()[category.filter(info => info.status === true)[0].text]
             ? Object.keys(
                 snapshot.val()[
                   category.filter(info => info.status === true)[0].text
@@ -67,7 +67,7 @@ const EnrollPage: React.FC<EnrollPageProps> = ({navigation}) => {
             : 0,
         );
       });
-  }, []);
+  }, [category]);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener(
