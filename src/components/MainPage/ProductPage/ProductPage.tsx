@@ -51,65 +51,58 @@ export default class ProductPage extends Component {
                     .text
                 ].slice(this.state.beginIndex, this.state.endIndex),
           },
-          // () =>
-          //   this.setState({
-          //     beginIndex: this.state.beginIndex + 4,
-          //     endIndex: this.state.endIndex + 4,
-          //     isLoading: false,
-          //     isGetDataFinish: false,
-          //   }),
+          () =>
+            this.setState({
+              isLoading: false,
+              isGetDataFinish: false,
+            }),
         );
-      }),
-      this.setState({
-        beginIndex: this.state.beginIndex + 4,
-        endIndex: this.state.endIndex + 4,
-        isLoading: false,
-        isGetDataFinish: false,
       });
   }
 
   componentDidUpdate(_, prevState: any) {
     if (prevState.navInfo !== this.state.navInfo) {
-      this.setState({isLoading: true}, () =>
-        database()
-          .ref('상품목록')
-          .on('value', snapshot => {
-            console.log('변경된 값 => ', snapshot.val());
-            this.setState(
-              {
-                productList:
-                  snapshot.val() &&
-                  snapshot
-                    .val()
-                    [
-                      this.state.navInfo.filter(info => info.status === true)[0]
-                        .text
-                    ].slice(this.state.beginIndex, this.state.endIndex),
-              },
-              // () => this.setState({isLoading: false}),
-            );
-          }),
-      );
-      console.log("qwwqewqewqewqe");
-      this.setState({isLoading: false});
+      this.setState({isLoading: true});
+      database()
+        .ref('상품목록')
+        .on('value', snapshot => {
+          console.log('변경된 값 => ', snapshot.val());
+          this.setState(
+            {
+              productList:
+                snapshot.val() &&
+                snapshot
+                  .val()
+                  [
+                    this.state.navInfo.filter(info => info.status === true)[0]
+                      .text
+                  ].slice(this.state.beginIndex, this.state.endIndex),
+            },
+            () => this.setState({isLoading: false}),
+          );
+        });
+
+      // this.setState({isLoading: false});
     }
   }
 
   onPressTextFocus = (index: number) => {
-    this.setState([
-      {
-        text: '에코백',
-        status: index === 0 ? true : false,
-      },
-      {
-        text: '티셔츠',
-        status: index === 1 ? true : false,
-      },
-      {
-        text: '기타물품',
-        status: index === 2 ? true : false,
-      },
-    ]);
+    this.setState({
+      navInfo: [
+        {
+          text: '에코백',
+          status: index === 0 ? true : false,
+        },
+        {
+          text: '티셔츠',
+          status: index === 1 ? true : false,
+        },
+        {
+          text: '기타물품',
+          status: index === 2 ? true : false,
+        },
+      ],
+    });
   };
 
   wrapper = css`
