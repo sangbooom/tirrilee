@@ -2,13 +2,11 @@ import React from 'react';
 import {View} from 'react-native';
 import {css} from '@emotion/native';
 
-interface SkeletonProps {}
+interface SkeletonProps {
+  index: any;
+}
 
-const Skeleton: React.FC<SkeletonProps> = () => {
-  const skeleton_wrapper = css`
-    flex-direction: row;
-  `;
-
+const Skeleton: React.FC<SkeletonProps> = ({index}) => {
   const skeleton_card__pr = css`
     width: 50%;
     height: 232px;
@@ -43,7 +41,7 @@ const Skeleton: React.FC<SkeletonProps> = () => {
   const skeleton_rating = css`
     width: 70%;
     height: 18px;
-    background-color: #f2f2f2;
+    background-color: red;
     position: relative;
     overflow: hidden;
     margin-bottom: 8px;
@@ -56,20 +54,19 @@ const Skeleton: React.FC<SkeletonProps> = () => {
     overflow: hidden;
   `;
 
-  return (
-    <View style={skeleton_wrapper}>
-      <View style={skeleton_card__pr}>
-        <View style={skeleton_img} />
-        <View style={skeleton_productName} />
-        <View style={skeleton_rating} />
-        <View style={skeleton_won} />
-      </View>
-      <View style={skeleton_card__pl}>
-        <View style={skeleton_img} />
-        <View style={skeleton_productName} />
-        <View style={skeleton_rating} />
-        <View style={skeleton_won} />
-      </View>
+  return index % 2 === 0 ? (
+    <View style={skeleton_card__pr}>
+      <View style={skeleton_img} />
+      <View style={skeleton_productName} />
+      <View style={skeleton_rating} />
+      <View style={skeleton_won} />
+    </View>
+  ) : (
+    <View style={skeleton_card__pl}>
+      <View style={skeleton_img} />
+      <View style={skeleton_productName} />
+      <View style={skeleton_rating} />
+      <View style={skeleton_won} />
     </View>
   );
 };
